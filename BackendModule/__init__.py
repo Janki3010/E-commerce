@@ -20,4 +20,4 @@ mysql = MySQL(app)
 app.secret_key = 'your_secret_key'
 
 
-importlib.import_module('module1.pack1')
+importlib.import_module('BackendModule.pack1')

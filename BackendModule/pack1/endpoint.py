@@ -1,5 +1,5 @@
-from module1 import api, socketio
-from module1.pack1.resources import *
+from BackendModule import api, socketio
+from BackendModule.pack1.resources import *
 
 api.add_resource(Register, '/register')
 api.add_resource(Login, '/login')

@@ -2,7 +2,7 @@ from flask import request, session
 from flask_restful import Resource
 from flask_socketio import Namespace, emit
 
-from module1 import mysql
+from BackendModule import mysql
 
 
 class Register(Resource):
