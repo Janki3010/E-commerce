@@ -7,35 +7,41 @@
       <th scope="col">Id</th>
       <th scope="col">Product Name</th>
       <th scope="col">Product Description</th>
-       <th scope="col">Product Price</th>
+      <th scope="col">Product Price</th>
       <th scope="col">Product Category</th>
       <th scope="col">Product Image</th>
-        <th scope="col">Product qty</th>
-
+      <th scope="col">Product qty</th>
+      <th scope="col">Actions</th> <!-- Add a header for actions -->
     </tr>
   </thead>
 
  <tbody>
     {% for product in products %}
     <tr>
-<!--        <th scope="row"> {{loop.index}} </th>-->
         <td>{{product[0]}}</td>
         <td>{{product[1]}}</td>
         <td>{{product[2]}}</td>
         <td>{{product[3]}}</td>
         <td>{{product[4]}}</td>
-        <td>{{product[5]}}</td>
+        <td><img src="{{ product[5] }}" alt="Product Image" style="width:100px;height:auto;"></td> <!-- Show image -->
         <td>{{product[6]}}</td>
+        <td>
+           <form action="/add_to_cart" method="post" class="add-to-cart-form">
+            <input type="hidden" name="user_id" value="{{ user_id }}">
+            <input type="hidden" name="product_id" value="{{ product[0] }}">
+            <input type="hidden" name="product_price" value="{{ product[3] }}">
+            <input type="number" name="quantity" min="1" max="{{ product[6] }}" required>
+            <button class="btn btn-outline-success" type="submit">Add to Cart</button>
+        </form>
 
+        </td>
     </tr>
     {% endfor %}
   </tbody>
 
 </table>
-    </center>
+</center>
 
-<a href="/chatbot">ChatBot</a>
-
-
+<a class="btn btn-primary" href="/chatbot">ChatBot</a>
 
 {% endblock %}
