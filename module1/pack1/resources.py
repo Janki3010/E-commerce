@@ -101,3 +101,10 @@ class AddToCart(Resource):
 class ChatBot(Resource):
     def get(self):
         return make_response(render_template('chatbot.html'))
+
+
+class Logout(Resource):
+    def get(self):
+        response = requests.get('http://127.0.0.1:6002/logout')
+        if response.status_code == 200:
+            return make_response(render_template('login.html'))
