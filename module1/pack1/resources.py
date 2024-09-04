@@ -35,7 +35,11 @@ class Login(Resource):
         cur.close()
         if account:
             user_id = account[0]
-            return {'message': 'success',  'user_id': user_id}, 200
+            session['loggedin'] = True
+            session['id'] = account[0]
+            # session['email'] = account[2]
+            # session['username'] = account[1]
+            return {'message': 'success', 'user_id': user_id}, 200
         else:
             return {'message': 'user not found'}, 404
 
@@ -67,7 +71,7 @@ class ProductDetails(Resource):
         cur.callproc('fetch_product')
         products = cur.fetchall()
 
-        return {'message': 'success', 'product': products,  'user_id': user_id}, 200
+        return {'message': 'success', 'product': products, 'user_id': user_id}, 200
 
 
 class AddToCart(Resource):
@@ -102,14 +106,26 @@ class ChatBot(Namespace):
         elif message == 'How are you?':
             response = "I’m doing great, thanks for asking! I’m here and ready to help with whatever you need."
         elif message == 'Everything is going well':
-            response = "That’s great to hear! Anything exciting happening or anything you’re looking forward to?"
+            response = "That’s great to hear!"
+        elif message == "Which types of products do u have?":
+            response = '1.Beauty & Personal Care 2.Arts 3.Electronic 4.Home & Kitchen 5.Toys & Games'
+        elif message == "Beauty & Personal Care" or message == "Arts" or message == "Electronic" or message == "Home & Kitchen" or message == "Toys & Games":
+            response = 'Yes this product is available'
         elif message == "Nothing is going well":
             response = "I’m sorry to hear that things aren’t going well. Do you want to talk about what’s been going on?"
         elif message == "Thank you":
-            response = "You’re welcome. If you feel like talking or if there’s anything I can do to help, just let me know."
+            response = "You’re welcome."
         else:
             response = "Sorry, I don't understand that."
         emit('response', response)
 
     def on_disconnect(self):
         print('Clint disconnected')
+
+
+class Logout(Resource):
+    def get(self):
+        session.pop('loggedin', None)
+        session.pop('id', None)
+
+        return {"message": "Logged out successfully"}, 200
