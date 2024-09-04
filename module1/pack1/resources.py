@@ -34,15 +34,10 @@ class Login(Resource):
         account = cur.fetchone()
         cur.close()
         if account:
-            return {'message': 'success'}, 200
+            user_id = account[0]
+            return {'message': 'success',  'user_id': user_id}, 200
         else:
             return {'message': 'user not found'}, 404
-        # if account:
-        #     session['loggedin'] = True
-        #     session['email'] = account[2]
-        #     session['role'] = account[5]
-        #
-        #     return 'successful login'
 
 
 class AddProduct(Resource):
@@ -66,24 +61,34 @@ class AddProduct(Resource):
 
 class ProductDetails(Resource):
     def get(self):
+        user_id = request.args.get('user_id')
         cur = mysql.connection.cursor()
         # products = cur.execute('select * from products')
         cur.callproc('fetch_product')
         products = cur.fetchall()
 
-        # products_list = []
-        # for product in products:
-        #     # products_list.append({
-        #     #     'name': product[1],
-        #     #     'description': product[2],
-        #     #     'price': product[3],
-        #     #     'category': product[4],
-        #     #     'image': product[5],
-        #     #     'qty': product[6]
-        #     # })
-        #     products_list.append(list(product))
+        return {'message': 'success', 'product': products,  'user_id': user_id}, 200
 
-        return {'message': 'success', 'product': products}, 200
+
+class AddToCart(Resource):
+    def post(self):
+        data = request.json
+        user_id = data.get('user_id')
+        product_id = data.get('product_id')
+        product_price = data.get('product_price')
+        quantity = data.get('quantity')
+
+        if not user_id or not product_id or not quantity:
+            return {"message": "Missing required fields"}, 400
+
+        cur = mysql.connection.cursor()
+        cur.callproc('add_to_cart', (user_id, product_id, quantity, product_price))
+        mysql.connection.commit()
+        cur.close()
+
+        # emit('cart_update', {'product_id': product_id, 'quantity': quantity}, room=user_id)
+
+        return {"message": "Product added to cart successfully"}, 200
 
 
 class ChatBot(Namespace):
@@ -108,4 +113,3 @@ class ChatBot(Namespace):
 
     def on_disconnect(self):
         print('Clint disconnected')
-
