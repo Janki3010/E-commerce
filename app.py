@@ -1,4 +1,4 @@
-from module1 import app
+from module1 import app, socketio
 
 if __name__ == '__main__':
-    app.run(debug=False, port=6002)
+    socketio.run(app, debug=False, port=6002)

@@ -1,5 +1,6 @@
 from flask import request, session
 from flask_restful import Resource
+from flask_socketio import Namespace, emit
 
 from module1 import mysql
 
@@ -82,5 +83,29 @@ class ProductDetails(Resource):
         #     # })
         #     products_list.append(list(product))
 
-        return {'message':'success', 'product': products}, 200
+        return {'message': 'success', 'product': products}, 200
+
+
+class ChatBot(Namespace):
+    def on_connect(self):
+        print('Clint connected')
+
+    def on_message(self, message):
+        print('Received message: ' + message)
+        if message == 'Hii':
+            response = 'Hiii! How can I help you?'
+        elif message == 'How are you?':
+            response = "I’m doing great, thanks for asking! I’m here and ready to help with whatever you need."
+        elif message == 'Everything is going well':
+            response = "That’s great to hear! Anything exciting happening or anything you’re looking forward to?"
+        elif message == "Nothing is going well":
+            response = "I’m sorry to hear that things aren’t going well. Do you want to talk about what’s been going on?"
+        elif message == "Thank you":
+            response = "You’re welcome. If you feel like talking or if there’s anything I can do to help, just let me know."
+        else:
+            response = "Sorry, I don't understand that."
+        emit('response', response)
+
+    def on_disconnect(self):
+        print('Clint disconnected')
 
