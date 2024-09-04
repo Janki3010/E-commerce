@@ -45,7 +45,6 @@ class Login(Resource):
                 return 'Error'
 
 
-
 class Admin(Resource):
     def get(self):
         return make_response(render_template('admin_panel.html'))
@@ -75,3 +74,8 @@ class Products(Resource):
         if response.status_code == 200:
             data = response.json()['product']
             return make_response(render_template('product_details.html', products=data))
+
+
+class ChatBot(Resource):
+    def get(self):
+        return make_response(render_template('chatbot.html'))
