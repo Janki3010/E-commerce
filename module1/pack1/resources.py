@@ -83,6 +83,7 @@ class Products(Resource):
 
 class AddToCart(Resource):
     def post(self):
+        user_id = request.form['user_id']
         data = {
             "user_id": request.form['user_id'],
             "product_id": request.form['product_id'],
@@ -93,12 +94,15 @@ class AddToCart(Resource):
         response = requests.post('http://127.0.0.1:6002/add_to_cart', json=data)
 
         if response.status_code == 200:
-            return make_response('Product added to cart successfully', 200)
+            if user_id:
+                return redirect(f'http://127.0.0.1:6001/product_details?user_id={user_id}')
+            # return make_response('Product added to cart successfully', 200)
         else:
             return make_response('Error adding product to cart', response.status_code)
 
 
 class ChatBot(Resource):
+
     def get(self):
         return make_response(render_template('chatbot.html'))
 
@@ -107,4 +111,4 @@ class Logout(Resource):
     def get(self):
         response = requests.get('http://127.0.0.1:6002/logout')
         if response.status_code == 200:
-            return make_response(render_template('login.html'))
+            return redirect('http://127.0.0.1:6001/login')
