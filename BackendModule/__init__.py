@@ -4,10 +4,14 @@ from flask_restful import Api
 import importlib
 from flask_mysqldb import MySQL
 from flask_socketio import SocketIO
+from flask_redis import FlaskRedis
 
 app = Flask(__name__)
 api = Api(app)
 socketio = SocketIO(app, origins=["http://127.0.0.1:6001"], cors_allowed_origins="*")
+
+app.config['REDIS_URL'] = "redis://localhost:6379/0"
+redis_client = FlaskRedis(app)
 
 CORS(app)
 

@@ -4,3 +4,4 @@ flask_mysqldb
 flask_socketio
 gevent
 flask_cors
+flask_redis

@@ -1,8 +1,11 @@
-from flask import request, session
+from flask import request, session, jsonify
 from flask_restful import Resource
 from flask_socketio import Namespace, emit
+import json
+from BackendModule import mysql, redis_client
 
-from BackendModule import mysql
+
+# from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 
 
 class Register(Resource):
@@ -23,6 +26,9 @@ class Register(Resource):
         return {"message": "Data inserted successfully"}, 200
 
 
+# access_token = ''
+
+
 class Login(Resource):
     def post(self):
         data = request.json
@@ -34,12 +40,16 @@ class Login(Resource):
         account = cur.fetchone()
         cur.close()
         if account:
+            # global access_token
             user_id = account[0]
+            # access_token = create_access_token(identity=user_id)
             session['loggedin'] = True
             session['id'] = account[0]
+            redis_client.set('user_id', user_id)
             # session['email'] = account[2]
             # session['username'] = account[1]
             return {'message': 'success', 'user_id': user_id}, 200
+            # return {'message': 'success', 'access_token': access_token, 'user_id': user_id}, 200
         else:
             return {'message': 'user not found'}, 404
 
@@ -65,13 +75,12 @@ class AddProduct(Resource):
 
 class ProductDetails(Resource):
     def get(self):
-        user_id = request.args.get('user_id')
         cur = mysql.connection.cursor()
         # products = cur.execute('select * from products')
         cur.callproc('fetch_product')
         products = cur.fetchall()
 
-        return {'message': 'success', 'product': products, 'user_id': user_id}, 200
+        return {'message': 'success', 'product': products}, 200
 
 
 class AddToCart(Resource):
@@ -95,6 +104,29 @@ class AddToCart(Resource):
         return {"message": "Product added to cart successfully"}, 200
 
 
+class cartProducts(Resource):
+    def get(self):
+        user_id = redis_client.get('user_id')
+        if user_id is None:
+            return {'message': 'User ID not found in Redis'}, 404
+
+        try:
+            user_id = int(user_id)
+            cur = mysql.connection.cursor()
+            cur.callproc('cart_products', [user_id])
+            products = cur.fetchall()
+            cur.close()
+
+
+            if not products:
+                return {'message': 'No products found'}, 404
+            # products = list(products)
+            return {'message': 'success', 'products': list(products)}
+
+        except Exception as e:
+            return {'message': f'Error: {str(e)}'}, 500
+
+
 class ChatBot(Namespace):
     def on_connect(self):
         print('Clint connected')
@@ -107,7 +139,7 @@ class ChatBot(Namespace):
             response = "I’m doing great, thanks for asking! I’m here and ready to help with whatever you need."
         elif message == 'Everything is going well':
             response = "That’s great to hear!"
-        elif message == "Which types of products do u have?":
+        elif message == "Which types of products available here?":
             response = '1.Beauty & Personal Care 2.Arts 3.Electronic 4.Home & Kitchen 5.Toys & Games'
         elif message == "Beauty & Personal Care" or message == "Arts" or message == "Electronic" or message == "Home & Kitchen" or message == "Toys & Games":
             response = 'Yes this product is available'
