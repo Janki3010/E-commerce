@@ -2,7 +2,7 @@ from flask import request, session, jsonify
 from flask_restful import Resource
 from flask_socketio import Namespace, emit
 import json
-from BackendModule import mysql, redis_client
+from module1 import mysql, redis_client
 
 
 # from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
