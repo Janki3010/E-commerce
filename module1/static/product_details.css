@@ -1,0 +1,19 @@
+nav-links a,
+.nav-links button {
+    background-color: darkseagreen;
+    color: black;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+av-links {
+    display: flex;
+    gap: 10px;
+}
+nav-links a:hover,
+.nav-links button:hover {
+    background-color: darkgreen;
+}

@@ -102,9 +102,22 @@ class AddToCart(Resource):
 
 
 class ChatBot(Resource):
-
     def get(self):
         return make_response(render_template('chatbot.html'))
+
+
+class CartProducts(Resource):
+    def get(self):
+        response = requests.get('http://127.0.0.1:6002/cartPro')
+        if response.status_code == 200:
+            data = response.json()['products']
+            return make_response(render_template('cartProducts.html', products=data))
+        else:
+            return make_response('Error fetching product details', response.status_code)
+
+
+class RemoveProduct(Resource):
+    pass
 
 
 class Logout(Resource):
