@@ -116,8 +116,16 @@ class CartProducts(Resource):
             return make_response('Error fetching product details', response.status_code)
 
 
-class RemoveProduct(Resource):
-    pass
+# class RemoveProduct(Resource):
+#     def post(self):
+#         data = {
+#             "cart_id": request.form['cart_id'],
+#             "qty": request.form['qty']
+#         }
+#         response = requests.post('http://127.0.0.1:6002/removeProduct', json=data)
+#         if response.status_code == 200:
+#            return {'message': 'success'}, 200
+#         return {'message': 'Faild'}, 404
 
 
 class Logout(Resource):
