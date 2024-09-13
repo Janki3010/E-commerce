@@ -14,11 +14,12 @@ function removeProduct(cartId) {
         })
         .then(response => {
             if (response.ok) {
-                // Remove the product row from the table on success
-                const row = document.getElementById(`product-row-${cartId}`);
-                if (row) {
-                    row.remove();
-                }
+                 window.location.href = 'http://127.0.0.1:6001/show_cart';
+//                // Remove the product row from the table on success
+//                const row = document.getElementById(`product-row-${cartId}`);
+//                if (row) {
+//                    row.remove();
+//                }
             } else {
                 console.error('Failed to remove product');
             }
