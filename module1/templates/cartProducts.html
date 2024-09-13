@@ -29,6 +29,7 @@
                 <td>
                     <input type="hidden" id="cart-id-{{ product[5] }}" value="{{ product[5] }}">
                     <button type="button" class="btn btn-success" onclick="removeProduct({{ product[5] }})">Remove</button>
+                    <button type="button" class="btn btn-success" onclick="addProduct({{ product[5] }})">Add</button>
                 </td>
             </tr>
             {% endfor %}
