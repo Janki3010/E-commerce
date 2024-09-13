@@ -3,7 +3,7 @@ from flask_restful import Resource
 from flask_socketio import Namespace, emit
 import json
 from module1 import mysql, redis_client
-from module1.pack1 import models
+
 
 class Register(Resource):
     def post(self):
