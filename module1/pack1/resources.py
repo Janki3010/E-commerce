@@ -3,10 +3,7 @@ from flask_restful import Resource
 from flask_socketio import Namespace, emit
 import json
 from module1 import mysql, redis_client
-
-
-# from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-
+from module1.pack1 import models
 
 class Register(Resource):
     def post(self):
@@ -117,7 +114,6 @@ class cartProducts(Resource):
             products = cur.fetchall()
             cur.close()
 
-
             if not products:
                 return {'message': 'No products found'}, 404
             # products = list(products)
@@ -125,6 +121,24 @@ class cartProducts(Resource):
 
         except Exception as e:
             return {'message': f'Error: {str(e)}'}, 500
+
+class RemoveProducts(Resource):
+    def post(self):
+        data = request.json
+        cart_id = data.get('cart_id')
+        qty = data.get('qty')
+
+        if cart_id and qty:
+            try:
+                cur = mysql.connection.cursor()
+                cur.callproc('updateCart', [int(cart_id), int(qty)])
+                mysql.connection.commit()
+                cur.close()
+                return {"message": "Product removed from the cart successfully"}, 200
+            except Exception as e:
+                print(f"Error: {e}")
+                return {"message": "Failed to remove product"}, 500
+        return {"message": "Invalid input"}, 400
 
 
 class ChatBot(Namespace):
