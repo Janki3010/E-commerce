@@ -122,6 +122,7 @@ class cartProducts(Resource):
         except Exception as e:
             return {'message': f'Error: {str(e)}'}, 500
 
+
 class RemoveProducts(Resource):
     def post(self):
         data = request.json
@@ -138,6 +139,25 @@ class RemoveProducts(Resource):
             except Exception as e:
                 print(f"Error: {e}")
                 return {"message": "Failed to remove product"}, 500
+        return {"message": "Invalid input"}, 400
+
+
+class addCartProduct(Resource):
+    def post(self):
+        data = request.json
+        cart_id = data.get('cart_id')
+        qty = data.get('qty')
+
+        if cart_id and qty:
+            try:
+                cur = mysql.connection.cursor()
+                cur.callproc('addProduct', [int(cart_id), int(qty)])
+                mysql.connection.commit()
+                cur.close()
+                return {"message": "Product added to the cart successfully"}, 200
+            except Exception as e:
+                print(f"Error: {e}")
+                return {"message": "Failed to add product"}, 500
         return {"message": "Invalid input"}, 400
 
 
