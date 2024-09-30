@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block start %}
+<link href="/static/payment.css" rel="stylesheet">
+<link href="/static/style.css" rel="stylesheet">
+<div class="container">
+   <center>
+        <h4>Process for the Payment</h4><br><br>
+
+       <form action="/add_address">
+         <button type="submit" class="btn btn-primary">Add New Address</button><br><br>
+       </form>
+       <form action="/all_address" method="post">
+         <button type="submit" class="btn btn-primary">All Available Addresses</button><br><br>
+       </form>
+
+       <table class="table mt-5" style="width:80%;">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">Address</th>
+            </tr>
+        </thead>
+         <tbody>
+            {% for address in all_address %}
+            <tr>
+            <td>
+                <input type="radio" name="selected_address" id="address_{{ loop.index }}" value="{{ address[0] }}">
+                <label for="address_{{ loop.index }}">{{ address[0] }}</label>
+            </td>
+            </tr>
+            {% endfor %}
+         </tbody>
+    </table>
+        <label for="paymentMethod" class="form-label">Payment Method</label>
+        <select id="paymentMethod" class="form-select">
+            <option value="select payment method">select payment method</option>
+            <option value="Card">Card</option>
+            <option value="GPay">GPay</option>
+            <option value="PayPal">PayPal</option>
+            <option value="Cash">Cash</option>
+        </select><br><br>
+        <button class="btn btn-success" type="submit">Proceed to Confirm Payment</button>
+    </center>
+
+</div>
+
+
+{% endblock %}
+

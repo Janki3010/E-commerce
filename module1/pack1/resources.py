@@ -1,6 +1,11 @@
+import os
+
 from flask import redirect, make_response, render_template, request
 from flask_restful import Resource
 import requests
+from werkzeug.utils import secure_filename
+
+from module1 import app
 
 
 class Register(Resource):
@@ -84,6 +89,7 @@ class Products(Resource):
 class AddToCart(Resource):
     def post(self):
         user_id = request.form['user_id']
+
         data = {
             "user_id": request.form['user_id'],
             "product_id": request.form['product_id'],
@@ -99,6 +105,54 @@ class AddToCart(Resource):
             # return make_response('Product added to cart successfully', 200)
         else:
             return make_response('Error adding product to cart', response.status_code)
+
+
+class BuyProducts(Resource):
+    def post(self):
+        response = requests.get('http://127.0.0.1:6002/buy_products')
+
+        if response.status_code == 200:
+            data = response.json()['products']
+            total = response.json()['total_price']
+            return make_response(render_template('buy_products.html', products=data, total=total))
+        else:
+            return make_response('Error at time buy the product', response.status_code)
+
+
+class ProcessPayment(Resource):
+    def get(self):
+        return make_response(render_template('payment.html'))
+
+
+class AllAddress(Resource):
+    def post(self):
+        response = requests.get('http://127.0.0.1:6002/all_address')
+
+        if response.status_code == 200:
+            address = response.json()['user_address']
+            return make_response(render_template('payment.html', all_address=address))
+        else:
+            return make_response('Error at time to fetch all the addresses', response.status_code)
+
+class AddAddress(Resource):
+    def get(self):
+        return make_response(render_template('add_address.html'))
+
+    def post(self):
+        data = {
+            "name": request.form['name'],
+            "street-address": request.form['street-address'],
+            "postal-code": request.form['postal-code'],
+            "city": request.form['city'],
+            "country": request.form['country']
+        }
+
+        response = requests.post('http://127.0.0.1:6002/add_address', json=data)
+
+        if response.status_code == 200:
+            return redirect('http://127.0.0.1:6001/payment')
+        else:
+            return make_response({"error": "Failed to insert data into the database"}, 500)
 
 
 class ChatBot(Resource):

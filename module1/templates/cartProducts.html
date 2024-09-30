@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block start %}
+<div class="container">
 <form class="form-horizontal" method="POST" >
 <center>
     <!-- Form Name -->
@@ -34,10 +35,13 @@
             </tr>
             {% endfor %}
         </tbody>
-
     </table>
+
 </center>
 
 </form>
-
+<form method="POST" action="/Buy_Products">
+    <button type="submit" class="btn btn-success">Buy Now</button>
+</form>
+</div>
 {% endblock %}
