@@ -1,3 +1,4 @@
+import requests
 from flask import request, session, jsonify
 from flask_restful import Resource
 from flask_socketio import Namespace, emit
@@ -159,6 +160,52 @@ class addCartProduct(Resource):
                 print(f"Error: {e}")
                 return {"message": "Failed to add product"}, 500
         return {"message": "Invalid input"}, 400
+
+
+class BuyProducts(Resource):
+    def get(self):
+        user_id = redis_client.get('user_id')
+        cur = mysql.connection.cursor()
+        cur.callproc('buy_products', [user_id])
+        products = cur.fetchall()
+        products = list(products)
+        total = 0
+        for price in products:
+            total += price[2]
+        print(total)
+        # mysql.connection.commit()
+        # cur.close()
+        if not products:
+            return {'message': 'No products found'}, 404
+        return {'message': 'success', 'products': list(products), 'total_price': total}
+
+
+class AddAddress(Resource):
+    def post(self):
+        user_id = redis_client.get('user_id')
+        data = request.json
+        name = data.get('name')
+        street_address = data.get('street-address')
+        postal_code = data.get('postal-code')
+        city = data.get('city')
+        country = data.get('country')
+        adress = f'{name},{street_address},{postal_code},{city},{country}'
+        cur = mysql.connection.cursor()
+        cur.execute("INSERT INTO address(uid,user_address) values(%s,%s)", (user_id, adress))
+        mysql.connection.commit()
+        cur.close()
+        return {"message": "Data inserted successfully"}, 200
+
+
+class AllAddress(Resource):
+    def get(self):
+        user_id = redis_client.get('user_id')
+        cur = mysql.connection.cursor()
+        cur.execute("select user_address from address where uid=%s", (user_id,))
+        all_address = cur.fetchall()
+        if not all_address:
+            return {'message': 'No address found'}, 404
+        return {'message': 'success', 'user_address': list(all_address)}, 200
 
 
 class ChatBot(Namespace):
