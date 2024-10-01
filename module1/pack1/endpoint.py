@@ -3,6 +3,8 @@ from module1.pack1.resources import *
 
 api.add_resource(Register, '/register')
 api.add_resource(Login, '/login')
+api.add_resource(ForgotPassword, '/forgotPassword')
+api.add_resource(ResetPassword, '/reset_password')
 api.add_resource(AddProduct, '/add_product')
 api.add_resource(ProductDetails, '/products')
 api.add_resource(AddToCart, '/add_to_cart')

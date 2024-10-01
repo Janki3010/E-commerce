@@ -52,6 +52,30 @@ class Login(Resource):
             return {'message': 'user not found'}, 404
 
 
+class ForgotPassword(Resource):
+    def post(self):
+        data = request.json
+        email = data.get('email')
+        cur = mysql.connection.cursor()
+        cur.execute('SELECT email from users where email=%s', (email,))
+        email = cur.fetchone()
+
+        redis_client.set('email', str(email))
+        if email:
+            return {'message': 'email exists'}, 200
+
+class ResetPassword(Resource):
+    def post(self):
+        email = redis_client.get('email')
+        decoded_string = email.decode('utf-8')
+        email = decoded_string.strip("()' ,")
+        data = request.json
+        new_password = data.get('new_password')
+        cur = mysql.connection.cursor()
+        cur.callproc('new_password', (new_password, str(email)))
+        mysql.connection.commit()
+        cur.close()
+
 class AddProduct(Resource):
     def post(self):
         data = request.json
