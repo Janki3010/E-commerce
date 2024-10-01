@@ -5,8 +5,8 @@ from flask import redirect, make_response, render_template, request, url_for, fl
 from flask_mail import Message
 from flask_restful import Resource
 import requests
-from module1 import app
-from module1 import s, mail
+from module1 import app, RECAPTCHA_SECRET_KEY
+from module1 import  mail
 
 
 class Register(Resource):
@@ -35,10 +35,23 @@ class Login(Resource):
         return make_response(render_template('login.html'))
 
     def post(self):
+        # Verify reCAPTCHA
+        recaptcha_response = request.form.get('g-recaptcha-response')
+        payload = {
+            'secret': RECAPTCHA_SECRET_KEY,
+            'response': recaptcha_response
+        }
+        response = requests.post('https://www.google.com/recaptcha/api/siteverify', data=payload)
+        result = response.json()
+
+        if not result.get('success'):
+            flash('reCAPTCHA verification failed. Please try again.')
+            return redirect('/login')  # Redirect to the login page
         data = {
             "email": request.form['email'],
             "password": request.form['password']
         }
+
 
         if request.form['email'] == 'admin@gmail.com':
             return redirect('http://127.0.0.1:6001/admin')
@@ -66,7 +79,6 @@ class ForgotPassword(Resource):
             flash('Email does not exist.', 'danger')
             return redirect(url_for('forgot_password'))
 
-        # Generate OTP
         otp = random.randint(100000, 999999)  # Generate a 6-digit OTP
 
         msg = Message('Your OTP for Password Reset', recipients=[email])
@@ -79,7 +91,7 @@ class ForgotPassword(Resource):
             flash('Failed to send email. Please try again later.', 'danger')
             app.logger.error(f'Error sending email: {str(e)}')
 
-        # Store the OTP in session or a temporary storage for validation
+
         session['otp'] = otp
         return redirect('http://127.0.0.1:6001/validate_otp')
 
@@ -92,11 +104,10 @@ class ValidateOTP(Resource):
         entered_otp = request.form['otp']
 
         if 'otp' in session and session['otp'] == int(entered_otp):
-            # OTP is valid, redirect to reset password page
             return redirect('http://127.0.0.1:6001/reset_password')
         else:
             flash('Invalid or expired OTP.', 'danger')
-            return redirect(url_for('forgot_password'))
+            return redirect('http://127.0.0.1:6001/forgot_password')
 
 
 class ResetPassword(Resource):
@@ -105,7 +116,6 @@ class ResetPassword(Resource):
 
     def post(self):
         new_password = request.form['password']
-
 
         data = {'new_password': new_password}
         response = requests.post('http://127.0.0.1:6002/reset_password', json=data)

@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block start %}
+<script src="https://www.google.com/recaptcha/api.js"></script>
 <br><br>
 <div class="container">
 
@@ -22,7 +23,9 @@
   <div class="mb-3">
     <label for="exampleInputPassword1" class="form-label">Password</label>
     <input type="password" class="form-control" name="password" id="exampleInputPassword1">
-  </div>
+  </div><br><br>
+
+   <div class="g-recaptcha" data-sitekey="6LeWilQqAAAAAIKiOBUhYgsXSI_k5w4InofQLw6K"></div><br>
   <button type="submit" class="btn btn-primary">Login</button>
   <p>Don't have an account <a href="/register">Register</a></p><br><br>
        <a href="/forgot_password">Forgot Password</a></p>

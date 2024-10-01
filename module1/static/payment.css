@@ -1,78 +1,92 @@
-body {
-    background-color: #f0f4f8; /* Light background for the page */
-    font-family: Arial, sans-serif;
+/* Reset some default styles */
+body, h4, label, select {
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
 }
-form {
-    background-color: #ffffff; /* White background for the form */
-    border-radius: 8px; /* Rounded corners */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Soft shadow */
-    padding: 20px;
-    margin: 20px auto;
-    max-width: 500px; /* Max width for the form */
-}
+
+/* Container styling */
 .container {
-    max-width: 800px; /* Maximum width for the container */
-    margin: 0 auto; /* Center the container */
-    padding: 20px; /* Padding around the content */
-    background-color: #ffffff; /* White background for the content area */
-    border-radius: 8px; /* Rounded corners */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Soft shadow */
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 30px;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
+/* Heading styling */
 h4 {
-    text-align: center; /* Center the header text */
-    margin-bottom: 20px; /* Space below the header */
+    color: #343a40;
+    margin-bottom: 20px;
 }
 
-button {
-    background-color: #28a745; /* Green button */
-    color: white; /* White text */
-    border: none; /* No border */
-    padding: 10px 15px; /* Padding for button */
-    border-radius: 4px; /* Slightly rounded corners */
-    cursor: pointer; /* Pointer cursor on hover */
-    width: 200px; /* Fixed width for buttons */
+/* Button styling */
+.btn {
+    background-color: #007bff;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
 }
 
-button:hover {
-    background-color: #218838; /* Darker green on hover */
+.btn:hover {
+    background-color: #0056b3;
 }
 
+/* Table styling */
 .table {
-    width: 100%; /* Full width for the table */
-    margin-top: 20px; /* Space above the table */
-    border-collapse: collapse; /* Remove space between cells */
+    margin-top: 30px;
+    border-collapse: collapse;
+    width: 100%;
 }
 
-.thead-dark th {
-    background-color: #343a40; /* Dark background for the header */
-    color: white; /* White text */
-    padding: 10px; /* Padding for header cells */
+.table th {
+    background-color: #343a40;
+    color: #ffffff;
+    padding: 12px;
+    text-align: left;
 }
 
-tbody td {
-    padding: 10px; /* Padding for table cells */
-    border-bottom: 1px solid #ddd; /* Light border between rows */
+.table td {
+    padding: 12px;
+    border-bottom: 1px solid #dee2e6;
 }
 
-input[type="radio"] {
-    margin-right: 10px; /* Space between radio button and label */
-}
-
+/* Form element styling */
 .form-label {
-    font-weight: bold; /* Bold for labels */
-    margin-top: 20px; /* Space above labels */
+    display: block;
+    margin-top: 20px;
+    font-weight: bold;
 }
 
 .form-select {
-    width: 100%; /* Full width for the select */
-    padding: 10px; /* Padding inside the select */
-    margin-top: 10px; /* Space above the select */
-    border: 1px solid #ccc; /* Light border */
-    border-radius: 4px; /* Slightly rounded corners */
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+    margin-top: 5px;
 }
 
-.form-select:focus {
-    border-color: #007bff; /* Change border color on focus */
-    outline: none; /* Remove default outline */
+/* Radio button label styling */
+input[type="radio"] {
+    margin-right: 10px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .container {
+        padding: 20px;
+    }
+
+    .btn {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .table {
+        font-size: 14px;
+    }
 }
