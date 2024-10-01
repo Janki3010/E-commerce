@@ -1,11 +1,12 @@
 import os
+import random
 
-from flask import redirect, make_response, render_template, request
+from flask import redirect, make_response, render_template, request, url_for, flash, session
+from flask_mail import Message
 from flask_restful import Resource
 import requests
-from werkzeug.utils import secure_filename
-
 from module1 import app
+from module1 import s, mail
 
 
 class Register(Resource):
@@ -50,6 +51,71 @@ class Login(Resource):
                     return redirect(f'http://127.0.0.1:6001/product_details?user_id={user_id}')
             else:
                 return 'Error'
+
+
+class ForgotPassword(Resource):
+    def get(self):
+        return make_response(render_template('forgot_password.html'))
+
+    def post(self):
+        email = request.form['email']
+        data = {'email': email}
+        response = requests.post('http://127.0.0.1:6002/forgotPassword', json=data)
+
+        if response.status_code != 200:
+            flash('Email does not exist.', 'danger')
+            return redirect(url_for('forgot_password'))
+
+        # Generate OTP
+        otp = random.randint(100000, 999999)  # Generate a 6-digit OTP
+
+        msg = Message('Your OTP for Password Reset', recipients=[email])
+        msg.body = f'Your OTP is {otp}. Please use it to reset your password.'
+
+        try:
+            mail.send(msg)
+            flash('Check your email for the OTP!', 'info')
+        except Exception as e:
+            flash('Failed to send email. Please try again later.', 'danger')
+            app.logger.error(f'Error sending email: {str(e)}')
+
+        # Store the OTP in session or a temporary storage for validation
+        session['otp'] = otp
+        return redirect('http://127.0.0.1:6001/validate_otp')
+
+
+class ValidateOTP(Resource):
+    def get(self):
+        return make_response(render_template('validate_otp.html'))
+
+    def post(self):
+        entered_otp = request.form['otp']
+
+        if 'otp' in session and session['otp'] == int(entered_otp):
+            # OTP is valid, redirect to reset password page
+            return redirect('http://127.0.0.1:6001/reset_password')
+        else:
+            flash('Invalid or expired OTP.', 'danger')
+            return redirect(url_for('forgot_password'))
+
+
+class ResetPassword(Resource):
+    def get(self):
+        return make_response(render_template('reset_password.html'))  # Render reset password form
+
+    def post(self):
+        new_password = request.form['password']
+
+
+        data = {'new_password': new_password}
+        response = requests.post('http://127.0.0.1:6002/reset_password', json=data)
+
+        if response.status_code == 200:
+            flash('Your password has been updated!', 'success')
+            return redirect(f'http://127.0.0.1:6001/login')  # Ensure 'login' is defined in your routes
+        else:
+            flash('Failed to update password.', 'danger')
+            return redirect(url_for('reset_password'))
 
 
 class Admin(Resource):
@@ -133,6 +199,7 @@ class AllAddress(Resource):
             return make_response(render_template('payment.html', all_address=address))
         else:
             return make_response('Error at time to fetch all the addresses', response.status_code)
+
 
 class AddAddress(Resource):
     def get(self):

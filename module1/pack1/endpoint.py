@@ -3,6 +3,9 @@ from module1.pack1.resources import *
 
 api.add_resource(Register, '/')
 api.add_resource(Login, '/login')
+api.add_resource(ForgotPassword, '/forgot_password', endpoint='forgot_password')
+api.add_resource(ResetPassword, '/reset_password', endpoint='reset_password')
+api.add_resource(ValidateOTP, '/validate_otp', endpoint='validate_otp')
 api.add_resource(Admin, '/admin')
 api.add_resource(Products, '/product_details')
 api.add_resource(AddToCart, '/add_to_cart')
