@@ -6,7 +6,7 @@ from flask_mail import Message
 from flask_restful import Resource
 import requests
 from module1 import app, RECAPTCHA_SECRET_KEY
-from module1 import  mail
+from module1 import mail
 
 
 class Register(Resource):
@@ -52,7 +52,6 @@ class Login(Resource):
             "password": request.form['password']
         }
 
-
         if request.form['email'] == 'admin@gmail.com':
             return redirect('http://127.0.0.1:6001/admin')
         else:
@@ -90,7 +89,6 @@ class ForgotPassword(Resource):
         except Exception as e:
             flash('Failed to send email. Please try again later.', 'danger')
             app.logger.error(f'Error sending email: {str(e)}')
-
 
         session['otp'] = otp
         return redirect('http://127.0.0.1:6001/validate_otp')
@@ -245,6 +243,11 @@ class CartProducts(Resource):
             return make_response(render_template('cartProducts.html', products=data))
         else:
             return make_response('Error fetching product details', response.status_code)
+
+
+class SuccessPayment(Resource):
+    def get(self):
+        return make_response(render_template('successPayment.html'))
 
 
 # class RemoveProduct(Resource):
